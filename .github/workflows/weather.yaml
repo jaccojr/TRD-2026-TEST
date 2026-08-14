@@ -1,15 +1,13 @@
-# Steps, commands, action versions and permissions below are taken verbatim from a real
-# run log. The trigger block is NOT recoverable from a log — see notes.
-name: weather
+name: Fetch weather (offset test, production-style)
+
+# One-time verification run, not the ongoing TEST mechanism. This deliberately mirrors
+# PROD's real workflow exactly, no date-shifting step, real fixed dates baked into data.js,
+# just offset 28 days earlier so they're still inside Open-Meteo's forecast horizon right
+# now. The point is to test the actual pipeline PROD will run, not the rolling TEST-only
+# shift_dates.py mechanism, which this run does NOT use.
 
 on:
-  # NOT from the log. Chosen as hourly because the project docs say hourly and two observed
-  # runs were 71 min apart (17:55, 19:07) — consistent with hourly + GitHub queue drift.
-  schedule:
-    - cron: "0 * * * *"
-  # NOT from the log — added so you can trigger a run by hand from the Actions tab.
-  # Delete this if you want to stay strictly faithful to the original.
-  workflow_dispatch:
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -19,23 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-
       - uses: actions/setup-python@v6
-        with:
-          python-version: "3.12"
-
-      - run: git pull origin main || true
-
-      # TEST ONLY — rewrites every date in data.js so Proloog is always "tomorrow".
-      # Delete this step when TEST becomes PROD, or it will overwrite the real dates.
-      - run: python shift_dates.py
-
+        with: { python-version: "3.12" }
       - run: python fetch_weather.py
-
       - run: |
           git config user.name "weather-bot"
           git config user.email "weather-bot@users.noreply.github.com"
-          git add weather.json data.js _points_data.json
-          git commit -m "daily date shift + weather update" || echo "no changes"
+          git add weather.json
+          git commit -m "offset test: weather update" || echo "no changes"
           git pull --rebase --autostash origin main || true
           git push
