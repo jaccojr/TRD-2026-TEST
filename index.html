@@ -308,6 +308,15 @@ a{color:inherit;}
 .map-zoom-viewport:active{cursor:grabbing;}
 .map-zoom-viewport img{position:absolute;top:50%;left:50%;max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;transform-origin:center center;
  transform:translate(-50%,-50%) scale(1);will-change:transform;user-select:none;-webkit-user-drag:none;}
+.map-zoom-viewport img.loading,.map-zoom-viewport img.failed{visibility:hidden;}
+.map-zoom-spinner{display:none;position:absolute;top:50%;left:50%;width:36px;height:36px;margin:-18px 0 0 -18px;
+ border:3px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:mzspin .7s linear infinite;}
+.map-zoom-spinner.show{display:block;}
+@keyframes mzspin{to{transform:rotate(360deg);}}
+.map-zoom-error{display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;
+ color:rgba(255,255,255,.85);font-family:var(--body);font-size:13.5px;line-height:1.6;}
+.map-zoom-error button{margin-top:10px;padding:8px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.3);
+ background:rgba(255,255,255,.1);color:#fff;font-family:var(--body);font-size:13px;cursor:pointer;}
 .map-zoom-hint{color:rgba(255,255,255,.55);text-align:center;font-family:var(--mono);font-size:9.5px;padding:10px 14px 16px;}
 .ev-h .dt{font-family:var(--mono);font-size:10px;color:var(--muted);}
 .ev.now .ev-h .dt{color:rgba(46,52,64,.8);}
@@ -444,6 +453,10 @@ footer{padding:20px 18px 100px;border-top:1px solid var(--line);text-align:cente
   <button class="map-zoom-close" onclick="closeMapZoom()" aria-label="Sluiten">✕</button>
   <div class="map-zoom-title" id="mapZoomTitle"></div>
   <div class="map-zoom-viewport" id="mapZoomViewport">
+    <div class="map-zoom-spinner" id="mapZoomSpinner"></div>
+    <div class="map-zoom-error" id="mapZoomError" style="display:none">
+      Kon de afbeelding niet laden.<br><button onclick="retryMapZoom()">Opnieuw proberen</button>
+    </div>
     <img id="mapZoomImg" src="" alt="">
   </div>
   <div class="map-zoom-hint">Knijp of scroll om in/uit te zoomen · sleep om te verplaatsen</div>
@@ -487,14 +500,20 @@ function gateCheck(){
     inp.value="";inp.focus();
   }
 }
-var APP_VERSION="1.67";
-var APP_STATUS="TEST-JULI-DATES"; // shown in header badge + footer; bump APP_VERSION with every iteration
+var APP_VERSION="1.69";
+var APP_STATUS="TEST-OFFSET-AUG"; // shown in header badge + footer; bump APP_VERSION with every iteration
 
 // Dev-only tools (date simulator, weather diagnostic) only render when APP_STATUS
 // contains "TEST" — this keeps them out of riders' hands on the PRELIMINARY/production
 // build without needing to delete the code each time. They were previously always
 // visible regardless of build status, which was a real leak into production.
 var IS_TEST_BUILD=/test/i.test(APP_STATUS);
+// GPX download hidden until the real, final route files replace the current ones —
+// expected roughly 7 days before the tour starts. Deliberately independent of
+// IS_TEST_BUILD: this isn't a test-vs-production distinction, it's "are these routes
+// the ones riders should actually download yet." Flip to true once the final GPX files
+// are in place, in either repo.
+var GPX_FINAL=false;
 document.addEventListener("DOMContentLoaded",function(){
   if(!IS_TEST_BUILD){
     var sb=document.getElementById("simBanner"); if(sb)sb.style.display="none";
@@ -792,7 +811,7 @@ function segBlock(s){
   var h='<div class="seg"><div class="sh"><div><div class="st">⚡ Strava Challenge</div><div class="sd">'+sg.desc+'</div></div><span class="chip cat">CAT '+sg.cat+'</span></div>'+
     '<div class="ss">km '+sg.kmStart+' → '+sg.kmEnd+' · '+sg.length+'</div>';
   h+='<div class="sbtns">';
-  h+='<a class="sbtn strava" href="'+sg.strava+'" target="_blank">'+STRAVA_SVG+' Strava segment</a>';
+  if(sg.strava){h+='<a class="sbtn strava" href="'+sg.strava+'" target="_blank">'+STRAVA_SVG+' Strava segment</a>';}
   h+='<a class="sbtn klass" href="https://challenges.the-ride.cc/" target="_blank">⚡ Klassement</a>';
   h+='</div></div>';
   return h;
@@ -824,7 +843,7 @@ function stageCard(s,expanded){
   }
   h+='<button class="exp-btn" onclick="toggleMap('+s.num+')" id="mapbtn-'+s.num+'">'+icon("map")+'<span class="lbl">Bekijk route op kaart</span><span class="cv">▼</span></button>';
   h+='<div class="map-wrap" id="mapw-'+s.num+'"><div class="map-c" id="map-'+s.num+'"></div></div>';
-  if(r.gpxFile){
+  if(r.gpxFile&&GPX_FINAL){
     h+='<button class="exp-btn gpxdl" onclick="downloadGpx(\''+r.gpxFile+'\')">'+icon("download")+'<span class="lbl">Download GPX</span></button>';
   }
   // weather
@@ -1614,11 +1633,36 @@ function toggleCampMap(id){
 
 /* ---- map zoom overlay: pinch (touch), wheel (desktop), drag-to-pan ---- */
 var mz={scale:1,x:0,y:0,startDist:0,startScale:1,dragging:false,lastX:0,lastY:0,pinching:false};
+var mzCurrentSrc=null;
 function openMapZoom(src,title){
-  document.getElementById("mapZoomImg").src=src;
+  mzCurrentSrc=src;
   document.getElementById("mapZoomTitle").textContent=title;
   mz.scale=1;mz.x=0;mz.y=0;applyMapTransform();
   document.getElementById("mapZoom").classList.add("open");
+  loadMapZoomImage(src);
+}
+function loadMapZoomImage(src){
+  var img=document.getElementById("mapZoomImg");
+  var spinner=document.getElementById("mapZoomSpinner");
+  var errBox=document.getElementById("mapZoomError");
+  errBox.style.display="none";
+  img.classList.add("loading");
+  img.classList.remove("failed");
+  spinner.classList.add("show");
+  img.onload=function(){
+    spinner.classList.remove("show");
+    img.classList.remove("loading");
+  };
+  img.onerror=function(){
+    spinner.classList.remove("show");
+    img.classList.add("failed");
+    errBox.style.display="block";
+  };
+  img.src=""; // clear immediately so a slow new load never shows the previous climb's stale image
+  img.src=src;
+}
+function retryMapZoom(){
+  if(mzCurrentSrc)loadMapZoomImage(mzCurrentSrc);
 }
 function closeMapZoom(){document.getElementById("mapZoom").classList.remove("open");}
 function applyMapTransform(){
