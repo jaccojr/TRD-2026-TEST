@@ -1,13 +1,19 @@
 name: Fetch weather (offset test, production-style)
 
-# One-time verification run, not the ongoing TEST mechanism. This deliberately mirrors
-# PROD's real workflow exactly, no date-shifting step, real fixed dates baked into data.js,
-# just offset 28 days earlier so they're still inside Open-Meteo's forecast horizon right
-# now. The point is to test the actual pipeline PROD will run, not the rolling TEST-only
-# shift_dates.py mechanism, which this run does NOT use.
+# Mirrors PROD's real workflow exactly: no date-shifting step, real fixed dates baked
+# into data.js, offset backward just far enough to stay inside Open-Meteo's forecast
+# horizon. The point is to test the actual pipeline PROD will run, not the rolling
+# TEST-only shift_dates.py mechanism, which this run does NOT use.
+#
+# Runs hourly. This was workflow_dispatch-only at first, deliberately, because TEST
+# briefly had a second, separate rolling workflow (shift_dates.py-based) also running
+# hourly, and manual-only avoided the two colliding. That other workflow no longer
+# exists in this repo, so there's nothing left for an hourly schedule to conflict with.
 
 on:
-  workflow_dispatch: {}
+  schedule:
+    - cron: "0 * * * *"   # hourly
+  workflow_dispatch: {}   # still available for an on-demand run too
 
 permissions:
   contents: write
