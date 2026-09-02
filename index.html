@@ -1435,8 +1435,10 @@ footer{padding:16px 18px 100px;border-top:1px solid var(--line);text-align:cente
   </a>
   <div class="foot-meta" id="footMeta">Routedata: GPX · Weer: Open-Meteo</div>
   <div class="foot-copy" style="text-align:center;color:#9a918a;font-size:11px;margin-top:6px;">© 2026 JR_c-137&nbsp;&nbsp;·&nbsp;&nbsp;All rights reserved</div>
-  <button id="btnWeerTest" onclick="showWeatherCheck()" style="display:none;margin:10px auto 0;padding:10px 16px;background:var(--rose-deep);color:#fff;border:none;border-radius:10px;font-family:var(--disp);font-weight:800;font-size:12px;cursor:pointer;">🌦 Weer testen</button>
-  <a id="btnAnalytics" href="https://jaccojr.goatcounter.com/" target="_blank" rel="noopener" style="display:none;margin:8px auto 0;padding:10px 16px;background:var(--rose-deep);color:#fff;border:none;border-radius:10px;font-family:var(--disp);font-weight:800;font-size:12px;cursor:pointer;text-decoration:none;text-align:center;">📊 Analytics</a>
+  <div id="debugBtnRow" style="display:flex;gap:8px;justify-content:center;margin:10px auto 0;max-width:280px;">
+    <button id="btnWeerTest" onclick="showWeatherCheck()" style="display:none;flex:1;padding:10px 12px;background:var(--rose-deep);color:#fff;border:none;border-radius:10px;font-family:var(--disp);font-weight:800;font-size:12px;cursor:pointer;">🌦 Weer testen</button>
+    <a id="btnAnalytics" href="https://jaccojr.goatcounter.com/" target="_blank" rel="noopener" style="display:none;flex:1;padding:10px 12px;background:var(--rose-deep);color:#fff;border:none;border-radius:10px;font-family:var(--disp);font-weight:800;font-size:12px;cursor:pointer;text-decoration:none;text-align:center;">📊 Analytics</a>
+  </div>
 </footer>
 <nav class="tabs" id="tabs"></nav>
 </div>
@@ -1564,7 +1566,7 @@ function gateCheck(){
     inp.value="";inp.focus();
   }
 }
-var APP_VERSION="2.23"; // bump with every iteration
+var APP_VERSION="2.24"; // bump with every iteration
 // The real WhatsApp community invite link. While this is null the footer
 // button renders inert and dimmed rather than pretending to work -- setting
 // it to the invite URL is the only change needed to go live.
