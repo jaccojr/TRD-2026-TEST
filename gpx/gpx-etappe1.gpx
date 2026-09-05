@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gpx version="1.1" creator="https://www.komoot.de" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
   <metadata>
-    <name>The Ride Etappe 1 !</name>
+    <name>The Ride Dolomites - Etappe 1 - maandag</name>
     <author>
       <link href="https://www.komoot.de">
         <text>komoot</text>
@@ -44,7 +44,7 @@
     <sym>Flag, Blue</sym>
   </wpt>
   <wpt lat="46.070998" lon="11.592046">
-    <name>Forcella Pass</name>
+    <name>Passo Forcella</name>
     <sym>Flag, Blue</sym>
   </wpt>
   <wpt lat="46.115736" lon="11.659773">
@@ -56,11 +56,11 @@
     <sym>Flag, Blue</sym>
   </wpt>
   <wpt lat="46.156512" lon="11.730895">
-    <name>Public Water Fountain</name>
+    <name>Drinkfontein</name>
     <sym>Drinking Water</sym>
   </wpt>
   <wpt lat="46.147616" lon="11.758362">
-    <name>Gobbera Pass</name>
+    <name>Gobbera-pas</name>
     <sym>Flag, Blue</sym>
   </wpt>
   <wpt lat="46.186537" lon="11.850507">
@@ -79,11 +79,11 @@
     <sym>Flag, Blue</sym>
   </wpt>
   <wpt lat="46.162709" lon="12.108573">
-    <name>Charterhouse of Vedana</name>
+    <name>Kartuizerklooster van Vedana</name>
     <sym>Flag, Blue</sym>
   </wpt>
   <trk>
-    <name>The Ride Etappe 1 !</name>
+    <name>The Ride Dolomites - Etappe 1 - maandag</name>
     <type>racebike</type>
     <trkseg>
       <trkpt lat="46.005873" lon="11.286977">
