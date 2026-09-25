@@ -253,14 +253,14 @@ footer{padding:16px 18px 24px;border-top:1px solid var(--line);text-align:center
 <script>
 "use strict";
 /* =====================================================================
-   EVENT APP ENGINE  v0.1-PRELIMINARY  (delivery 1: shell, languages, Today)
+   EVENT APP ENGINE  v0.1.1-PRELIMINARY  (delivery 1: shell, languages, Today)
    Reads event.json (format v0) + lang/*.json. No event facts in this file.
    ===================================================================== */
-var ENGINE_VERSION = "0.1";
+var ENGINE_VERSION = "0.1.1";
 var ENGINE_STATUS = "PRELIMINARY";
 var CONFIG = {
   eventUrl: "event.json",
-  langBase: "lang/",
+  langBase: "",                  // language files sit next to index.html (no subfolder: easier to upload)
   assetBase: "../",              // photos, logos, GPX live one folder up in the TEST repo
   weatherUrl: "../weather.json", // same file v2.29 reads
   weatherKeymapUrl: "weather-keymap.json" // old "num-idx" keys -> new point ids

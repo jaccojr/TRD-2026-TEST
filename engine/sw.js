@@ -1,10 +1,10 @@
 /* Event app engine service worker (v0.1-PRELIMINARY).
    Own cache name and own scope (/engine/), so it never touches v2.29's cache at the repo root.
    Rule carried over from TRD: bump CACHE whenever a same-named asset changes. */
-const CACHE = "engine-trd2026-v0.1";
+const CACHE = "engine-trd2026-v0.1.1";
 const CORE = ["./", "index.html", "event.json", "weather-keymap.json",
-  "lang/ui.en.json", "lang/ui.nl.json", "lang/sport-cycling.en.json", "lang/sport-cycling.nl.json",
-  "lang/weather.en.json", "lang/weather.nl.json"];
+  "ui.en.json", "ui.nl.json", "sport-cycling.en.json", "sport-cycling.nl.json",
+  "weather.en.json", "weather.nl.json"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));
