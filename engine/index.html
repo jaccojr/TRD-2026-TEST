@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Event app</title>
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* Event app engine. Colours below are defaults; boot() overwrites them from event.json style.colors
+   (--rose* names kept from TRD v2.29 so its approved CSS could be reused unchanged). */
+:root{
+ --bg:#ffffff;--paper:#faf7f4;--card:#ffffff;--ink:#2e3440;--ink2:#574e47;--muted:#9a918a;
+ --line:#eee8e1;--line2:#e2dad1;
+ --rose:#EC96D3;--rose-deep:#CE289E;--rose-soft:#F5E9F2;--rose-line:#EECFE5;
+ --amber:#cf8412;--red:#d6455a;--gold:#E3A625;
+ --wa-icon:url("data:image/png;base64,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");
+ --action-btn-h:46px;
+ --disp:'Archivo',sans-serif;--body:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+a{color:inherit;}
+
+/* ---------- App shell (rule 37): no position:fixed tab bar.
+   Header, one scroll area, tab bar as a normal flex item at the bottom. ---------- */
+html,body{height:100%;background:var(--bg);}
+@media (max-width:540px){body{background:var(--rose);}}
+body{font-family:var(--body);color:var(--ink);line-height:1.45;-webkit-font-smoothing:antialiased;overflow:hidden;}
+.app{height:100vh;height:100dvh;display:flex;flex-direction:column;max-width:540px;margin:0 auto;background:var(--bg);}
+.app > header{flex:0 0 auto;}
+.hd-top{padding-top:max(14px,env(safe-area-inset-top));}
+.hd-top .lang-sw{margin-left:auto;display:flex;gap:4px;}
+.lang-sw button{appearance:none;border:1.5px solid var(--rose-deep);background:#fff;color:var(--rose-deep);font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 7px;border-radius:7px;cursor:pointer;}
+.lang-sw button.on{background:var(--rose-deep);color:#fff;}
+.scroller{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;background:var(--bg);}
+.tabs{flex:0 0 auto;display:grid;grid-template-columns:repeat(var(--ntabs,4),1fr);background:var(--rose);border-top:1px solid var(--rose-line);padding-bottom:env(safe-area-inset-bottom,0px);}
+.view{display:none;padding:16px 14px 34px;animation:fade .25s ease;}
+.view.active{display:block;}
+footer{padding:16px 18px 24px;border-top:1px solid var(--line);text-align:center;}
+.foot-copy{text-align:center;color:var(--muted);font-size:11px;margin-top:6px;}
+.placeholder{margin:24px 16px;padding:20px;border:1.5px dashed var(--line2);border-radius:14px;color:var(--muted);font-size:13px;text-align:center;}
+.boot-error{margin:24px 16px;padding:16px;border:1.5px solid var(--red);border-radius:12px;color:var(--red);font-family:var(--mono);font-size:12px;white-space:pre-wrap;}
+.today-touch .tq-eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--rose-deep);margin-bottom:6px;}
+.today-touch .tq-author{font-size:11px;color:var(--muted);margin-top:4px;}
+.sim-banner{display:none;}
+.sim-banner.on{display:flex;}
+
+/* ---------- Reused from TRD v2.29 (approved look), verbatim ---------- */
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;}
+.hd-top{display:flex;align-items:center;gap:11px;padding:14px 18px 13px;position:sticky;top:0;z-index:50; background:var(--rose);border-bottom:1px solid var(--rose-line);}
+.mark-logo{height:30px;width:auto;flex-shrink:0;}
+.hd-title .t{font-family:var(--disp);font-weight:800;font-size:17px;letter-spacing:-.02em;line-height:1.05; color:#2e3440;transform:skewX(-12.4deg);display:inline-block;}
+.hd-actions{display:flex;gap:9px;padding:9px 14px;border-top:1px solid var(--line);position:relative;}
+.hd-actions .hbtn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:var(--action-btn-h);box-sizing:border-box;padding:0 10px;border-radius:9px; font-family:var(--disp);font-weight:700;font-size:12px;text-decoration:none;cursor:pointer;border:1.5px solid;appearance:none;background:#fff;}
+.hbtn.loc.wa{border-color:#25D366;color:#075E54;}
+.hbtn.loc.wa:active{background:#e9f9ef;}
+.hbtn.sos{border-color:var(--red);color:var(--red);}
+.hbtn.sos:active{background:#fcecee;}
+.sim-banner{background:var(--rose-soft);border-top:1px dashed var(--rose-line);border-bottom:1px dashed var(--rose-line);padding:8px 14px;display:flex;flex-direction:column;gap:6px;}
+.sim-banner.collapsed{display:none;}
+.sim-toggle{border:1px solid var(--rose-line);background:#fff;color:var(--rose-deep);border-radius:7px;width:22px;height:22px;font-size:11px;cursor:pointer;line-height:1;flex:0 0 auto;}
+.sim-row{display:flex;align-items:center;gap:8px;}
+.sim-lab{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--rose-deep);}
+.sim-row button{border:1px solid var(--rose-line);background:#fff;color:var(--rose-deep);border-radius:7px;width:26px;height:22px;font-size:13px;cursor:pointer;line-height:1;}
+.sim-row button.sim-reset{width:auto;padding:0 8px;font-family:var(--mono);font-size:9px;letter-spacing:.08em;}
+.sim-day{font-size:11px;font-weight:700;color:var(--ink);flex:1;text-align:center;}
+.sim-time{font-size:11px;font-weight:700;color:var(--rose-deep);min-width:78px;text-align:right;}
+.sim-row input[type=range]{flex:1;accent-color:var(--rose-deep);}
+.tab{appearance:none;border:none;background:none;padding:8px 4px;cursor:pointer;display:flex;justify-content:center;}
+.tab-inner{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 12px 6px;border-radius:14px;}
+.tab .ic{display:flex;justify-content:center;font-size:15px;font-weight:400;}
+.tab .ic .ic-svg{width:17px;height:17px;fill:var(--ink);}
+.tab .lbl{font-family:var(--disp);font-weight:700;font-size:11.5px;letter-spacing:.01em;color:var(--ink);}
+.tab.active .tab-inner{border:1.5px solid #fff;}
+.tab.active .ic .ic-svg{fill:#fff;}
+.tab.active .lbl{color:#fff;}
+.view.active{display:block;}
+.tc-wxlines{margin-top:2px;}
+.tc-wxline{display:flex;align-items:center;gap:8px;padding:6px 0;border-top:1px solid var(--line);}
+.tc-wxline:first-child{border-top:none;}
+.tc-wxline .wi{font-size:16px;flex-shrink:0;}
+.tc-wxline .wl2{flex:1;min-width:0;font-size:11.5px;color:var(--muted);}
+.tc-wxline .wl2 .wtime{color:var(--ink);font-weight:600;font-family:var(--mono);font-size:11px;}
+.tc-wxline .wv{font-family:var(--mono);font-weight:700;font-size:12.5px;white-space:nowrap;}
+.tc-wxline .wvcol{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;}
+.tc-wxline .wvcol .wpill{white-space:nowrap;}
+.wlist .witem{display:flex;gap:9px;align-items:flex-start;padding:6px 0;font-size:12px;color:var(--ink2);}
+.wx-hazard{margin:12px 15px;padding:2px 14px;border-radius:13px; background:#fdf6ea;border:1px solid rgba(207,132,18,.35);box-shadow:0 2px 6px rgba(207,132,18,.14);}
+.wh-row{display:flex;align-items:center;gap:11px;padding:11px 0;}
+.wh-row+.wh-row{border-top:1px solid rgba(207,132,18,.25);}
+.wh-icon{font-size:22px;flex-shrink:0;}
+.wh-title{font-weight:700;font-size:13px;color:var(--amber);}
+.wh-sub{font-size:11.5px;color:var(--ink2);margin-top:2px;}
+.wlist .wd{color:var(--amber);flex-shrink:0;}
+.wpill{font-family:var(--mono);font-size:9px;color:var(--ink2);background:#f3efea;padding:2px 6px;border-radius:5px;}
+.today-greet{font-family:var(--disp);font-weight:800;font-size:26px;letter-spacing:-.01em;color:var(--ink);transform:skewX(-12.4deg);display:inline-block;}
+.today-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 16px 0;}
+.today-daybadge{font-family:var(--mono);font-size:10.5px;font-weight:700;color:var(--rose-deep);background:var(--rose-soft);padding:5px 10px;border-radius:20px;white-space:nowrap;}
+.today-stagesub{padding:2px 16px 4px;font-size:13px;color:var(--ink2);}
+.today-wx{padding:0 16px 10px;font-size:14px;color:var(--ink2);}
+.today-wx .wi{font-size:16px;}
+.today-quote{margin:0 16px 14px;padding:18px 20px;background:var(--rose-soft);border-radius:16px;border:1px solid var(--rose-line);text-align:center;}
+.today-quote .tq-it{font-family:var(--disp);font-weight:800;font-style:italic;font-size:15.5px;color:var(--ink);}
+.today-quote .tq-nl{font-size:12px;color:var(--ink2);margin-top:5px;}
+.today-card{background:#fff;border-radius:16px;margin:0 16px 14px;overflow:hidden;border:1px solid var(--line2);}
+.today-card.tc-tap{cursor:pointer;}
+.today-card.tc-tap:active{background:var(--rose-soft);}
+.tc-photo{position:relative;aspect-ratio:16/9;background:var(--rose-soft);overflow:hidden;}
+.tc-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.tc-photo.img-fallback{background:linear-gradient(135deg,var(--rose-soft),var(--rose-line));}
+.tc-photo.tc-photo-short{aspect-ratio:32/9;}
+.tc-ab{position:absolute;top:10px;right:10px;display:flex;border:1.5px solid #fff;border-radius:8px;overflow:hidden;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);}
+.tc-ab button{border:none;background:transparent;color:#fff;font-family:var(--disp);font-weight:800;font-size:11px;width:24px;height:22px;cursor:pointer;}
+.tc-ab button.on{background:var(--rose);}
+.tc-body{padding:14px 16px 16px;}
+.tc-eyebrow{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--rose-deep);margin-bottom:4px;}
+.tc-title{font-family:var(--disp);font-weight:800;font-size:20px;color:var(--ink);}
+.tc-campname{font-family:var(--disp);font-weight:700;font-size:15px;color:var(--ink);}
+.tc-sub{font-size:13px;color:var(--ink2);margin-top:3px;}
+.tc-stats-row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.tc-stat{background:var(--rose-soft);border-radius:9px;padding:7px 10px;flex:1;min-width:64px;}
+.tc-stat b{display:block;font-family:var(--disp);font-weight:800;font-size:16px;color:var(--ink);}
+.tc-stat span{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.03em;color:var(--ink2);margin-top:2px;}
+.tc-climb-name{font-family:var(--disp);font-weight:800;font-size:16px;color:var(--ink);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.tc-cat{font-family:var(--mono);font-size:9px;font-weight:700;background:var(--rose-deep);color:#fff;padding:2px 7px;border-radius:6px;letter-spacing:.04em;}
+.tc-menu-card{background:#fffdfa;border:1px solid var(--ink);outline:1px solid var(--ink);outline-offset:-5px;padding:26px 20px;text-align:center;}
+.tc-menu-eyebrow{font-family:var(--disp);font-weight:800;font-style:italic;font-size:15px;letter-spacing:.06em;color:var(--ink);text-transform:uppercase;}
+.tc-menu-camp{font-size:11.5px;color:var(--ink2);margin-top:2px;}
+.tc-menu-rule{width:56px;height:1px;background:var(--rose-deep);margin:12px auto;}
+.tc-menu-rule.small{width:auto;height:auto;background:none;color:var(--rose-deep);font-size:11px;margin:16px auto;letter-spacing:.3em;}
+.tc-menu-row{display:flex;justify-content:center;align-items:baseline;gap:10px;margin-top:6px;}
+.tc-menu-label{font-family:var(--disp);font-weight:800;font-size:15px;color:var(--ink);letter-spacing:.02em;}
+.tc-menu-time{font-family:var(--mono);font-size:10.5px;color:var(--rose-deep);letter-spacing:.02em;}
+.tc-menu-dish{font-size:12.5px;font-style:italic;color:var(--ink2);margin-top:5px;line-height:1.5;}
+.sos-choice{position:fixed;inset:0;background:rgba(26,21,18,.94);z-index:1001;display:none;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:14px;}
+.sos-choice.open{display:flex;}
+.sos-close{position:absolute;top:14px;right:14px;z-index:2;width:36px;height:36px;border-radius:50%;border:none; background:rgba(255,255,255,.15);color:#fff;font-size:16px;cursor:pointer;}
+.sos-eyebrow{color:rgba(255,255,255,.6);font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px;}
+.sos-opt{width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;gap:4px;padding:20px 18px;border-radius:16px;text-decoration:none;cursor:pointer;box-sizing:border-box;}
+.sos-opt .so-ic{font-size:26px;line-height:1;display:flex;align-items:center;justify-content:center;}
+.sos-opt .so-ic svg{display:block;}
+.sos-opt .so-lbl{font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:.02em;}
+.sos-opt .so-sub{font-family:var(--body);font-size:11.5px;margin-top:2px;}
+.sos-opt.primary{background:var(--red);color:#fff;}
+.sos-opt.primary .so-sub{color:rgba(255,255,255,.85);}
+.sos-opt.secondary{background:#fff;border:1.5px solid var(--rose);color:var(--ink);}
+.sos-opt.secondary .so-sub{color:var(--muted);}
+.sos-opt:active{opacity:.85;}
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.plogo{position:relative;display:block;background:#fff;border:1px solid var(--line);border-radius:13px;box-shadow:0 1px 2px rgba(0,0,0,.04);overflow:hidden;}
+.plogo::before{content:"";display:block;padding-top:56.68%;}
+.plogo .pl-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:8px 12px;box-sizing:border-box;}
+.plogo img{object-fit:contain;max-width:70%;max-height:72%;}
+.quick-links{padding:16px 18px 4px;text-align:center;}
+.ql-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;}
+.link-btn{background:#fff;border:1px solid var(--line);display:flex;flex-direction:row;align-items:center;justify-content:center;gap:5px;border-radius:9px; padding:0 12px;text-decoration:none;color:var(--ink);font-family:var(--disp);font-weight:700;font-size:11.5px;height:var(--action-btn-h);box-sizing:border-box;}
+.link-btn:active{opacity:.85;}
+.link-btn.is-disabled{opacity:.45;pointer-events:none;cursor:default;}
+.link-btn .lb-row{display:flex;align-items:center;gap:5px;}
+.wa-badge-icon{width:18px;height:18px;flex:0 0 18px;display:block;background-image:var(--wa-icon);background-size:contain;background-repeat:no-repeat;background-position:center;}
+.link-btn .lb-logo{height:16px;width:auto;display:block;}
+.link-btn .lb-txt{font-family:var(--disp);font-weight:800;font-size:11.5px;letter-spacing:.04em;}
+.spotify-btn{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:11px; padding:0 20px;text-decoration:none;color:var(--ink);font-family:var(--disp);font-weight:700;font-size:13px;height:var(--action-btn-h);box-sizing:border-box;margin-bottom:18px;}
+.spotify-btn:active{opacity:.9;}
+.foot-spon{font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;}
+.foot-meta{font-family:var(--mono);font-size:9.5px;color:var(--muted);letter-spacing:.04em;}
+#cover{display:none;position:fixed;inset:0;z-index:10000;background:#000;overflow:hidden;cursor:pointer;}
+#cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 25%;}
+#cover .cover-fade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.15) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.65) 100%);}
+#cover .cover-content{position:absolute;left:0;right:0;bottom:0;padding:0 28px 48px;text-align:center;color:#fff;}
+#cover .cover-logo{position:static;display:block;margin:0 auto 12px;width:180px;height:auto;filter:drop-shadow(0 3px 14px rgba(0,0,0,.4));}
+#cover .cover-sub{font-family:var(--disp);font-weight:800;font-size:17px;letter-spacing:-.02em;line-height:1.05; color:#fff;transform:skewX(-12.4deg);display:inline-block;margin-top:6px;text-shadow:0 2px 10px rgba(0,0,0,.35);}
+#cover .cover-tap{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:rgba(255,255,255,.75);margin-top:22px;animation:coverPulse 2s ease-in-out infinite;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+@keyframes coverPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+</style>
+</head>
+<body>
+<div id="cover" onclick="dismissCover()">
+  <img id="coverImg" alt="">
+  <div class="cover-fade"></div>
+  <div class="cover-content">
+    <img class="cover-logo" id="coverLogo" alt="">
+    <div class="cover-sub" id="coverSub"></div>
+    <div class="cover-tap" id="coverTap"></div>
+  </div>
+</div>
+
+<div class="app">
+  <header>
+    <div class="hd-top">
+      <img class="mark-logo" id="hdLogo" alt="">
+      <div class="hd-title"><div class="t" id="hdTitle"></div></div>
+      <div class="lang-sw" id="langSw"></div>
+    </div>
+  </header>
+
+  <main class="scroller" id="scroller">
+    <div class="hd-actions" id="hdActions" style="display:none">
+      <a class="hbtn loc wa" id="waEmergency" target="_blank" rel="noopener"><span class="wa-badge-icon" aria-hidden="true"></span><span id="waEmergencyLbl"></span></a>
+      <button class="hbtn sos" onclick="openSos()"><span aria-hidden="true">📞</span> <span id="sosBtnLbl"></span></button>
+    </div>
+
+    <div class="sim-banner" id="simBanner">
+      <div class="sim-row">
+        <span class="sim-lab">Demo day</span>
+        <button onclick="simStep(-1)" aria-label="previous day">‹</button>
+        <span class="sim-day mono" id="simDayLbl">now</span>
+        <button onclick="simStep(1)" aria-label="next day">›</button>
+        <button class="sim-reset" onclick="engineSim.reset()">now</button>
+      </div>
+      <div class="sim-row">
+        <input type="range" id="simSlider" min="0" max="1439" step="30" value="480" oninput="engineSim.set(null,+this.value)">
+        <span class="sim-time mono" id="simTimeLbl">--:--</span>
+      </div>
+    </div>
+
+    <section class="view" id="v-today"></section>
+    <section class="view" id="v-route"></section>
+    <section class="view" id="v-camp"></section>
+    <section class="view" id="v-prep"></section>
+
+    <div class="quick-links"><div class="ql-grid" id="quickLinks"></div></div>
+    <footer>
+      <a class="spotify-btn" id="playlistBtn" target="_blank" rel="noopener" style="display:none"><svg width="22" height="22" viewBox="0 0 24 24" fill="#1DB954" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+    </svg><span id="playlistLbl"></span></a>
+      <div class="foot-meta" id="footMeta"></div>
+      <div class="foot-copy" id="footCopy"></div>
+    </footer>
+  </main>
+
+  <nav class="tabs" id="tabs"></nav>
+</div>
+
+<div class="sos-choice" id="sosChoice" onclick="if(event.target.id==='sosChoice')closeSos()">
+  <button class="sos-close" onclick="closeSos()" id="sosClose">✕</button>
+  <div class="sos-eyebrow" id="sosTitle"></div>
+  <a class="sos-opt primary" id="sosPublic">
+    <span class="so-ic" aria-hidden="true"><svg width="26" height="26" viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg"><rect x="9.5" y="2" width="5" height="20" rx="1.5"/><rect x="2" y="9.5" width="20" height="5" rx="1.5"/></svg></span>
+    <span class="so-lbl" id="sosPublicLbl"></span><span class="so-sub" id="sosPublicSub"></span>
+  </a>
+  <a class="sos-opt secondary" id="sosOrg">
+    <span class="so-ic">📞</span>
+    <span class="so-lbl" id="sosOrgLbl"></span><span class="so-sub" id="sosOrgSub"></span>
+  </a>
+</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   EVENT APP ENGINE  v0.1-PRELIMINARY  (delivery 1: shell, languages, Today)
+   Reads event.json (format v0) + lang/*.json. No event facts in this file.
+   ===================================================================== */
+var ENGINE_VERSION = "0.1";
+var ENGINE_STATUS = "PRELIMINARY";
+var CONFIG = {
+  eventUrl: "event.json",
+  langBase: "lang/",
+  assetBase: "../",              // photos, logos, GPX live one folder up in the TEST repo
+  weatherUrl: "../weather.json", // same file v2.29 reads
+  weatherKeymapUrl: "weather-keymap.json" // old "num-idx" keys -> new point ids
+};
+// Test build = any repo whose name ends in -TEST (same idea as v2.29's IS_TEST_URL, not a hand-set flag).
+var IS_TEST = /-TEST\//i.test(location.pathname);
+
+/* ---------- pacing constants (road, from TRD-2026; per discipline later) ---------- */
+var FIELD_SCALE = 0.9;       // Jacco's pace -> field-typical pace
+var FEED_STOP_MIN = 30;      // per feed station
+var FINISH_WINDOW_MIN = 45;  // expected finish shown as ±45 min
+var WEATHER_STALE_HOURS = 4;
+var HAZARD_BUFFER_MIN = 120;
+var BLOCKS_PER_TAB = 4;
+
+var WX_ICON = {0:"☀️",1:"🌤️",2:"⛅",3:"☁️",45:"🌫️",48:"🌫️",51:"🌦️",53:"🌦️",55:"🌧️",56:"🌧️",57:"🌧️",
+  61:"🌧️",63:"🌧️",65:"🌧️",66:"🌨️",67:"🌨️",71:"🌨️",73:"🌨️",75:"❄️",77:"🌨️",80:"🌦️",81:"🌧️",82:"🌧️",85:"🌨️",86:"❄️",95:"⛈️",96:"⛈️",99:"⛈️"};
+var WX_HAZARD_CODES = [45,48,56,57,65,66,67,71,73,75,77,82,85,86,95,96,99];
+// Public emergency numbers by country (Q40). Event data may override (emergency.publicByCountry).
+var PUBLIC_EMERGENCY = {US:"911",CA:"911",GB:"999",AU:"000",ZA:"10111",TZ:"112"}; // everything else: 112
+var LOCALE = {nl:"nl-NL",en:"en-GB",de:"de-DE",fr:"fr-FR",it:"it-IT",es:"es-ES"};
+var ICONS = {
+  terrain:"M23 18H1L8.25 8.33L10.25 11L14 6L23 18M11.5 12.67L14 16L19 16L14 9.33L11.5 12.67M5 16L11.5 16L8.25 11.67L5 16Z",
+  tent:"M4,6C4,7.19 4.39,8.27 5,9A3,3 0 0,1 2,6A3,3 0 0,1 5,3C4.39,3.73 4,4.81 4,6M2,21V19H4.76L12,4.78L19.24,19H22V21H2M12,9.19L7,19H17L12,9.19Z",
+  bag:"M22 19H2V21H22V19M4 15C4 15.5 4.2 16 4.6 16.4C5 16.8 5.5 17 6 17V6C5.5 6 5 6.2 4.6 6.6C4.2 7 4 7.5 4 8V15M13.5 6H10.5C10.5 5.6 10.6 5.2 10.9 4.9C11.2 4.6 11.5 4.5 12 4.5C12.4 4.5 12.8 4.6 13.1 4.9C13.3 5.2 13.5 5.6 13.5 6M7 6V17H17V6H15C15 5.2 14.7 4.5 14.1 3.9S12.8 3 12 3C11.2 3 10.5 3.3 9.9 3.9C9.3 4.5 9 5.2 9 6H7M18 17C18.5 17 19 16.8 19.4 16.4C19.8 16 20 15.5 20 15V8C20 7.5 19.8 7 19.4 6.6C19 6.2 18.5 6 18 6V17Z",
+  sun:"M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9M12,2L14.39,5.42C13.65,5.15 12.84,5 12,5C11.16,5 10.35,5.15 9.61,5.42L12,2M3.34,7L7.5,6.65C6.9,7.16 6.36,7.78 5.94,8.5C5.5,9.24 5.25,10 5.11,10.79L3.34,7M3.36,17L5.12,13.23C5.26,14 5.53,14.78 5.95,15.5C6.37,16.24 6.91,16.86 7.5,17.37L3.36,17M20.65,7L18.88,10.79C18.74,10 18.47,9.23 18.05,8.5C17.63,7.78 17.1,7.15 16.5,6.64L20.65,7M20.64,17L16.5,17.36C17.09,16.85 17.62,16.22 18.04,15.5C18.46,14.77 18.73,14 18.87,13.21L20.64,17M12,22L9.59,18.56C10.33,18.83 11.14,19 12,19C12.82,19 13.63,18.83 14.37,18.56L12,22Z"
+};
+
+/* ---------- state ---------- */
+var EV = null;          // event.json
+var LANG = "en";        // active rider language
+var L = {};             // active language strings (all layers merged)
+var WX = null;          // weather by point id, or null
+var KEYMAP = null;
+var SIM = {iso: null, min: null};
+var curTab = "today";
+var partnerAssignment = null;
+
+/* ---------- small helpers ---------- */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+function asset(f){ return f ? CONFIG.assetBase + f : ""; }
+function store(k, v){ var key = EV.event.id + "." + k; try{ if(v === undefined){ var r = localStorage.getItem(key); return r == null ? null : JSON.parse(r); } localStorage.setItem(key, JSON.stringify(v)); }catch(e){ return null; } }
+function photo(file, cls){ // photo block only when the event has that image; v2.29 fallback if it fails to load
+  return file ? '<div class="tc-photo' + (cls ? " " + cls : "") + '">' + imgTag(file) + "</div>" : "";
+}
+function imgTag(file){ // decorative photo with the v2.29 fallback block
+  if(!file) return "";
+  return '<img src="' + esc(asset(file)) + '" alt="" loading="lazy" onerror="this.style.display=\'none\';this.parentElement.classList.add(\'img-fallback\')">';
+}
+
+/* ---------- language ---------- */
+function t(key, params){
+  var v = L[key];
+  if(v == null) return IS_TEST ? "⟦" + key + "⟧" : "";
+  if(typeof v === "object"){
+    var n = params && params.n != null ? params.n : 0;
+    v = v[new Intl.PluralRules(LOCALE[LANG] || LANG).select(n)] || v.other;
+  }
+  return v.replace(/\{(\w+)\}/g, function(m, k){ return params && params[k] != null ? params[k] : m; });
+}
+function P(map){ // event prose in the active language
+  if(!map) return "";
+  return map[LANG] || map[EV.event.languages.default] || map[Object.keys(map)[0]];
+}
+function loadLang(lang){
+  var layers = ["ui", "sport-" + (EV.event.vocabulary || "cycling"), "weather"];
+  return Promise.all(layers.map(function(l){
+    return fetch(CONFIG.langBase + l + "." + lang + ".json", {cache: "no-cache"}).then(function(r){
+      if(!r.ok) throw new Error("language file missing: " + l + "." + lang + ".json");
+      return r.json();
+    });
+  })).then(function(parts){
+    var merged = {};
+    parts.forEach(function(p){ for(var k in p) merged[k] = p[k]; });
+    L = merged; LANG = lang;
+    document.documentElement.lang = lang;
+    partnerAssignment = null;
+  });
+}
+function setLang(lang){ store("lang", lang); loadLang(lang).then(renderAll); }
+
+/* ---------- formatting (Intl, never hand-made decimals) ---------- */
+function loc(){ return LOCALE[LANG] || LANG; }
+function fmtNum(n, dec){ if(n == null) return "—"; dec = dec == null ? 0 : dec; return new Intl.NumberFormat(loc(), {minimumFractionDigits: dec, maximumFractionDigits: dec}).format(n); }
+function fmtKm(n){ return fmtNum(n, Math.round(n) === n ? 0 : 1); } // 148 -> "148", 12.3 -> "12,3" (nl) / "12.3" (en)
+function fmtHHMM(min){ min = Math.round(min); var h = Math.floor(min / 60) % 24, m = ((min % 60) + 60) % 60; return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m; }
+function hhmmToMin(s){ var p = s.split(":"); return (+p[0]) * 60 + (+p[1]); }
+function fmtWindow(w){
+  if(!w) return "—";
+  if(w.from && w.to) return w.from + "–" + w.to;
+  if(w.to) return t("common.until", {time: w.to});
+  return w.from;
+}
+
+/* ---------- time: everything in the event's own time zone (Q39) ---------- */
+function tzNow(){
+  var f = new Intl.DateTimeFormat("en-CA", {timeZone: EV.event.timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23"});
+  var p = {}; f.formatToParts(new Date()).forEach(function(x){ p[x.type] = x.value; });
+  return {iso: p.year + "-" + p.month + "-" + p.day, min: (+p.hour) * 60 + (+p.minute)};
+}
+function todayIso(){ return SIM.iso || tzNow().iso; }
+function nowMin(){ return SIM.min != null ? SIM.min : tzNow().min; }
+function isoAdd(iso, days){ var d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + days); return d.toISOString().slice(0, 10); }
+function isoDiff(a, b){ return Math.round((Date.parse(b + "T12:00:00Z") - Date.parse(a + "T12:00:00Z")) / 86400000); }
+
+/* ---------- event model helpers ---------- */
+function byDate(iso){ return EV.days.filter(function(d){ return d.date === iso; })[0] || null; }
+function place(id){ return EV.places.filter(function(p){ return p.id === id; })[0] || null; }
+function activeOption(){
+  var id = store("option");
+  return EV.options.filter(function(o){ return o.id === id; })[0] || EV.options.filter(function(o){ return o.default; })[0] || EV.options[0];
+}
+function optionStages(){ var ids = activeOption().stages; return ids.map(function(id){ return EV.stages.filter(function(s){ return s.id === id; })[0]; }); }
+function stageOn(iso){ return optionStages().filter(function(s){ return s.date === iso; })[0] || null; }
+function stageName(s){
+  if(s.nameOverride) return P(s.nameOverride);
+  return s.kind === "prologue" ? t("sport.prologue") : t("sport.stageName", {n: s.n});
+}
+function variantOf(s){
+  var chosen = (store("variants") || {})[s.id];
+  return s.variants.filter(function(v){ return v.id === chosen; })[0] || s.variants.filter(function(v){ return v.default; })[0] || s.variants[0];
+}
+function setVariant(stageId, vid){ var all = store("variants") || {}; all[stageId] = vid; store("variants", all); renderAll(); }
+function pointById(s, id){ return s.points.filter(function(p){ return p.id === id; })[0]; }
+function scheduleItem(day, type, variantId){
+  if(!day || !day.schedule) return null;
+  var items = day.schedule.filter(function(i){ return i.type === type; });
+  return items.filter(function(i){ return i.variant === variantId; })[0] || items.filter(function(i){ return !i.variant; })[0] || null;
+}
+function morningPlace(iso){ var prev = byDate(isoAdd(iso, -1)); return prev ? place(prev.overnightPlace) : null; }
+function pointLabel(pt){ return pt.type === "start" ? t("wx.point.start") : pt.type === "finish" ? t("wx.point.finish") : t("wx.point.feed", {n: pt.n}); }
+function pointName(s, pt){ return pt.type === "start" ? s.startName : pt.type === "finish" ? (s.loop ? s.startName : s.finishName) : (pt.name || ""); }
+
+/* ---------- pacing: default rider times, point times ---------- */
+function defaultStartMin(s, v){
+  var it = scheduleItem(byDate(s.date), "start", v.id);
+  var raw = it && it.time.from ? hhmmToMin(it.time.from) : 8 * 60;
+  return Math.round(raw / 15) * 15;
+}
+function ridingMinutes(v){ return v.derived.legs.map(function(l){ return l.baseMin / FIELD_SCALE; }); }
+function feedCount(s, v){ return v.pointRefs.filter(function(r){ return pointById(s, r.point).type === "feed"; }).length; }
+function defaultFinishMin(s, v){
+  var total = ridingMinutes(v).reduce(function(a, b){ return a + b; }, 0) + feedCount(s, v) * FEED_STOP_MIN;
+  return Math.round((defaultStartMin(s, v) + total) / 15) * 15;
+}
+function riderTimes(s, v){
+  var all = store("riderTimes") || {};
+  return all[s.id + "/" + v.id] || {start: defaultStartMin(s, v), finish: defaultFinishMin(s, v)};
+}
+function hasRiderOverride(s, v){ var all = store("riderTimes") || {}; return !!all[s.id + "/" + v.id]; }
+function routePointTimes(s, v){
+  var rt = riderTimes(s, v), seg = ridingMinutes(v);
+  var raw = seg.reduce(function(a, b){ return a + b; }, 0);
+  var stops = feedCount(s, v) * FEED_STOP_MIN;
+  var scale = raw > 0 ? (rt.finish - rt.start - stops) / raw : 1;
+  var out = [{point: pointById(s, v.pointRefs[0].point), min: rt.start}], cum = rt.start;
+  for(var i = 0; i < seg.length; i++){
+    cum += seg[i] * scale;
+    var pt = pointById(s, v.pointRefs[i + 1].point);
+    out.push({point: pt, min: cum});
+    if(pt.type === "feed") cum += FEED_STOP_MIN;
+  }
+  return out;
+}
+
+/* ---------- weather ---------- */
+function weatherWindowOpen(){
+  var first = optionStages()[0].date;
+  return isoDiff(todayIso(), first) <= ((EV.event.weather && EV.event.weather.forecastDays) || 7);
+}
+function loadWeather(){
+  if(!weatherWindowOpen()){ WX = null; return Promise.resolve(); }
+  return fetch(CONFIG.weatherUrl + "?t=" + Date.now(), {cache: "no-store"}).then(function(r){ return r.ok ? r.json() : null; }).then(function(d){
+    var data = d && d.data ? d.data : null;
+    if(data){
+      var age = d.updated ? (Date.now() - Date.parse(d.updated)) / 3600000 : NaN;
+      if(!(age >= 0) || age > WEATHER_STALE_HOURS) data = null; // stale or unknown -> treat as absent (v2.29 rule)
+    }
+    if(data && KEYMAP){ var m = {}; for(var k in data){ m[KEYMAP[k] || k] = data[k]; } data = m; }
+    WX = data;
+  }).catch(function(){ WX = null; });
+}
+function wxAt(pt, min){
+  if(!WX || !pt || pt.tbd) return null;
+  var p = WX[pt.id]; if(!p) return null;
+  var hr = String(Math.round(min / 60));
+  return p.hourly && p.hourly[hr] ? p.hourly[hr] : p;
+}
+function windDir(deg){ return t("wx.dir." + ["n","ne","e","se","s","sw","w","nw"][Math.round(deg / 45) % 8]); }
+function windWord(kmh){ return t("today.wx.wind", {strength: kmh < 15 ? t("today.wx.windLight") : t("today.wx.windModerate")}); }
+function wxLineHtml(wx){
+  if(!wx) return '<span class="wi">⏳</span> ' + esc(t("wx.pending"));
+  return '<span class="wi">' + (WX_ICON[wx.code] || "🌡️") + '</span> <b>' + wx.temp + '°C</b> · ' + esc(t("wx.code." + wx.code)) + ", " + esc(windWord(wx.wind));
+}
+function hazardEpisodes(s, v){
+  var out = []; if(!WX) return out;
+  var times = routePointTimes(s, v);
+  times.forEach(function(tp){
+    var pt = tp.point, p = WX[pt.id]; if(!p || pt.tbd) return;
+    var name = pointName(s, pt);
+    if(p.hourly){
+      var lo = Math.floor((tp.min - HAZARD_BUFFER_MIN) / 60), hi = Math.ceil((tp.min + HAZARD_BUFFER_MIN) / 60);
+      var hrs = Object.keys(p.hourly).map(Number).sort(function(a, b){ return a - b; });
+      var i = 0;
+      while(i < hrs.length){
+        var code = p.hourly[String(hrs[i])].code;
+        if(WX_HAZARD_CODES.indexOf(code) < 0 || hrs[i] < lo || hrs[i] > hi){ i++; continue; }
+        var j = i;
+        while(j + 1 < hrs.length && hrs[j + 1] === hrs[j] + 1 && hrs[j + 1] <= hi && p.hourly[String(hrs[j + 1])].code === code) j++;
+        out.push({pt: pt, name: name, code: code, lo: hrs[i], hi: hrs[j]}); i = j + 1;
+      }
+    }else if(WX_HAZARD_CODES.indexOf(p.code) >= 0){
+      out.push({pt: pt, name: name, code: p.code, lo: null, hi: null});
+    }
+  });
+  return out;
+}
+function hazardHtml(s, v){
+  var eps = hazardEpisodes(s, v); if(!eps.length) return "";
+  return '<div class="wx-hazard">' + eps.map(function(e){
+    var when = e.lo != null ? fmtHHMM(e.lo * 60) + (e.hi !== e.lo ? "–" + fmtHHMM(e.hi * 60) : "") : t("wx.hazard.today");
+    var title = L["wx.hazard." + e.code] ? t("wx.hazard." + e.code) : t("wx.hazard.generic");
+    return '<div class="wh-row"><span class="wh-icon">' + (WX_ICON[e.code] || "⚠️") + '</span><div class="wh-body"><div class="wh-title">' + esc(title) +
+      '</div><div class="wh-sub">' + esc(pointLabel(e.pt)) + (e.name ? " · " + esc(e.name) : "") + " · " + esc(when) + "</div></div></div>";
+  }).join("") + "</div>";
+}
+
+/* ---------- tabs (rule 55: Today always first) ---------- */
+function tabList(){
+  var tabs = ["today", "route"];
+  if(EV.places.some(function(p){ return p.type === "campsite"; })) tabs.push("camp");
+  var first = optionStages()[0].date;
+  if(EV.event.packingList && EV.event.packingList.length && todayIso() < first) tabs.push("prep");
+  return tabs;
+}
+var TAB_ICON = {today: "sun", route: "terrain", camp: "tent", prep: "bag"};
+function icon(n){ return '<svg class="ic-svg" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="' + ICONS[n] + '"/></svg>'; }
+function renderNav(){
+  var tabs = tabList();
+  if(tabs.indexOf(curTab) < 0) curTab = "today";
+  var nav = $("tabs");
+  nav.style.setProperty("--ntabs", tabs.length);
+  nav.innerHTML = tabs.map(function(v){
+    return '<button class="tab' + (v === curTab ? " active" : "") + '" data-v="' + v + '" onclick="showTab(\'' + v + '\')"><span class="tab-inner"><span class="ic">' + icon(TAB_ICON[v]) + '</span><span class="lbl">' + esc(t("tab." + v)) + "</span></span></button>";
+  }).join("");
+  document.querySelectorAll(".view").forEach(function(el){ el.classList.toggle("active", el.id === "v-" + curTab); });
+}
+function showTab(v){
+  if(tabList().indexOf(v) < 0) return;
+  curTab = v;
+  document.querySelectorAll(".tab").forEach(function(b){ b.classList.toggle("active", b.dataset.v === v); });
+  document.querySelectorAll(".view").forEach(function(el){ el.classList.toggle("active", el.id === "v-" + v); });
+  $("scroller").scrollTop = 0;
+}
+
+/* ---------- partners (weighted rotation over the visible tabs, as v2.29) ---------- */
+function partnerAssign(){
+  if(partnerAssignment) return partnerAssignment;
+  var tabs = tabList(), sp = EV.event.partners || [], out = {};
+  tabs.forEach(function(tb){ out[tb] = []; });
+  sp.forEach(function(p, i){ out[tabs[i % tabs.length]].push(p); });
+  tabs.forEach(function(tb){
+    while(out[tb].length < BLOCKS_PER_TAB){
+      var pool = sp.filter(function(p){ return out[tb].indexOf(p) < 0; }); if(!pool.length) break;
+      var total = pool.reduce(function(a, p){ return a + (p.weight || 1); }, 0), r = Math.random() * total;
+      for(var i = 0; i < pool.length; i++){ r -= (pool[i].weight || 1); if(r <= 0){ out[tb].push(pool[i]); break; } }
+    }
+  });
+  return (partnerAssignment = out);
+}
+function partnerGridHtml(tab){
+  var list = partnerAssign()[tab] || []; if(!list.length) return "";
+  return '<div class="foot-spon">' + esc(t("footer.partners")) + '</div><div class="pgrid">' + list.map(function(p){
+    var fit = p.logoFit ? ' style="max-width:' + p.logoFit.maxWidth + '%;max-height:' + p.logoFit.maxHeight + '%"' : "";
+    var url = typeof p.url === "object" ? (p.url[LANG] || p.url[Object.keys(p.url)[0]]) : p.url;
+    var img = '<img src="' + esc(asset(p.logo)) + '" alt="' + esc(p.name) + '"' + fit + ">";
+    return url ? '<a class="plogo" href="' + esc(url) + '" target="_blank" rel="noopener"><div class="pl-inner">' + img + "</div></a>" : '<div class="plogo"><div class="pl-inner">' + img + "</div></div>";
+  }).join("") + "</div>";
+}
+
+/* ---------- TODAY ---------- */
+function phase(){
+  var d = todayIso(), days = EV.days;
+  if(d < days[0].date) return {k: "pre"};
+  if(d > days[days.length - 1].date) return {k: "post", day: null};
+  var day = byDate(d);
+  if(day.type === "stage"){ var s = stageOn(d); if(s) return {k: "stage", day: day, stage: s}; }
+  if(day.type === "departure") return {k: "post", day: day};
+  return {k: "welcome", day: day}; // arrival, optionalArrival, rest
+}
+function greeting(){ var h = Math.floor(nowMin() / 60); return h < 12 ? t("today.greeting.morning") : h < 18 ? t("today.greeting.afternoon") : t("today.greeting.evening"); }
+function touchHtml(tc){
+  if(!tc) return "";
+  var h = '<div class="today-quote today-touch">';
+  if(tc.eyebrow) h += '<div class="tq-eyebrow">' + esc(P(tc.eyebrow)) + "</div>";
+  if(tc.original && tc.originalLang !== LANG){
+    h += '<div class="tq-it">"' + esc(tc.original) + '"</div><div class="tq-nl">' + esc(P(tc.text)) + "</div>";
+  }else{
+    h += '<div class="tq-it">' + (tc.kind === "quote" ? '"' + esc(P(tc.text)) + '"' : esc(P(tc.text))) + "</div>";
+  }
+  if(tc.author) h += '<div class="tq-author">' + esc(tc.author) + "</div>";
+  return h + "</div>";
+}
+function menuRow(label, time){ return '<div class="tc-menu-row"><span class="tc-menu-label">' + esc(label) + '</span><span class="tc-menu-time">' + esc(time) + "</span></div>"; }
+function eveningBlock(day){ // dinner, briefing, and tomorrow's breakfast + start (read from the next day, no 'morgen' markers)
+  var h = "", din = scheduleItem(day, "dinner"), bri = scheduleItem(day, "briefing");
+  var next = byDate(isoAdd(day.date, 1)), nb = scheduleItem(next, "breakfast");
+  var nextStage = next ? stageOn(next.date) : null;
+  var ns = scheduleItem(next, "start", nextStage ? variantOf(nextStage).id : undefined);
+  var sep = '<div class="tc-menu-rule small">✦</div>';
+  if(din){ h += menuRow(t("schedule.dinner"), fmtWindow(din.time)) + '<div class="tc-menu-dish">' + esc(din.menu ? P(din.menu) : t("schedule.menuTbc")) + "</div>"; }
+  if(bri){ h += (h ? sep : "") + menuRow(t("schedule.briefing"), fmtWindow(bri.time)); }
+  if(nb || ns){
+    h += (h ? sep : "");
+    if(nb) h += menuRow(t("schedule.breakfast") + " " + t("schedule.tomorrowSuffix"), fmtWindow(nb.time));
+    if(ns) h += menuRow(t("schedule.start") + " " + t("schedule.tomorrowSuffix"), fmtWindow(ns.time));
+  }
+  return h;
+}
+function renderToday(){
+  var v = $("v-today"), ph = phase();
+  var stages = optionStages();
+  var html = '<div class="today-header"><div class="today-greet">' + esc(greeting()) + "</div>";
+  if(ph.k === "stage" && stages.length > 1){
+    html += '<div class="today-daybadge">' + esc(t("today.dayBadge", {n: stages.indexOf(ph.stage) + 1, total: stages.length})) + "</div>";
+  }
+  html += "</div>";
+
+  if(ph.k === "pre"){
+    var first = stages[0];
+    var days = isoDiff(todayIso(), first.date);
+    html += touchHtml(EV.event.preEventTouch);
+    html += '<div class="today-card">' + photo(EV.event.images && EV.event.images.preEvent) + '<div class="tc-body">' +
+      '<div class="tc-eyebrow">' + esc(t("today.pre.eyebrow")) + "</div>" +
+      (EV.event.todayTexts && EV.event.todayTexts.preTitle ? '<div class="tc-title">' + esc(P(EV.event.todayTexts.preTitle)) + "</div>" : "") +
+      '<div class="tc-sub">' + esc(t("today.pre.countdown", {n: days})) + "</div></div></div>";
+    v.innerHTML = html + partnerGridHtml("today");
+    return;
+  }
+
+  if(ph.k === "welcome"){
+    var fs = stages[0], fv = variantOf(fs), fday = byDate(fs.date);
+    var fst = scheduleItem(fday, "start", fv.id);
+    var startPt = pointById(fs, fv.pointRefs[0].point);
+    html += '<div class="today-wx" id="todayWx">' + wxLineHtml(WX && WX[startPt.id] ? WX[startPt.id] : null) + "</div>"; // v2.29: snapshot of the first start point
+    html += touchHtml(ph.day.touch);
+    var pl = place(ph.day.overnightPlace);
+    html += '<div class="today-card">' + photo(pl && pl.photo) + '<div class="tc-body">' +
+      (EV.event.todayTexts && EV.event.todayTexts.welcomeEyebrow ? '<div class="tc-eyebrow">' + esc(P(EV.event.todayTexts.welcomeEyebrow)) + "</div>" : "") +
+      '<div class="tc-title">' + esc(t("today.welcome.title")) + "</div>" +
+      '<div class="tc-sub">' + esc(fs.startName) + " " + esc(t("today.welcome.firstStart", {stage: stageName(fs), time: fst ? fmtWindow(fst.time) : "—"})) + "</div></div></div>";
+    var reg = scheduleItem(ph.day, "registration");
+    var menu = "";
+    if(reg){
+      menu += '<div class="tc-menu-eyebrow">' + esc(t("today.welcome.afternoon")) + '</div><div class="tc-menu-rule"></div>' +
+        menuRow(t("today.welcome.checkin"), fmtWindow(reg.time)) + (reg.label ? '<div class="tc-menu-dish">' + esc(P(reg.label)) + "</div>" : "") +
+        '<div class="tc-menu-rule small">✦</div>';
+    }
+    var eve = eveningBlock(ph.day);
+    if(eve) menu += '<div class="tc-menu-eyebrow">' + esc(t("today.evening")) + '</div><div class="tc-menu-rule"></div>' + eve;
+    if(menu) html += '<div class="today-card tc-menu-card">' + menu + "</div>";
+    v.innerHTML = html + partnerGridHtml("today");
+    return;
+  }
+
+  if(ph.k === "post"){
+    var bf = ph.day ? scheduleItem(ph.day, "breakfast") : null;
+    html += '<div class="today-card">' + photo(EV.event.images && EV.event.images.postEvent) + '<div class="tc-body">' +
+      '<div class="tc-eyebrow">' + esc(t("today.post.eyebrow")) + "</div>" +
+      (bf ? '<div class="tc-sub">' + esc(t("schedule.breakfast")) + " " + esc(fmtWindow(bf.time)) + "</div>" : "") +
+      '<div class="tc-title">' + esc(t("today.post.title")) + "</div>" +
+      '<div class="tc-sub">' + esc(t("today.post.sub", {organiser: EV.event.organiser.name})) + "</div></div></div>";
+    v.innerHTML = html + partnerGridHtml("today");
+    return;
+  }
+
+  // ---- stage day ----
+  var s = ph.stage, va = variantOf(s), day = ph.day, min = nowMin();
+  var stItem = scheduleItem(day, "start", va.id), bfItem = scheduleItem(day, "breakfast");
+  var startFrom = stItem && stItem.time.from ? hhmmToMin(stItem.time.from) : 8 * 60;
+  var card1Until = Math.ceil((startFrom + 120) / 30) * 30;          // v2.29: 10:00 normal, 14:00 prologue
+  var din = scheduleItem(day, "dinner");
+  var eveningFrom = din && din.time.from ? hhmmToMin(din.time.from) - 60 : 17 * 60 + 30; // v2.29: 17:30
+  var showCard1 = min < card1Until, showDay = min < eveningFrom;
+
+  html += '<div class="today-stagesub">' + esc(stageName(s)) + " · " + esc(s.startName) + (s.loop ? " ↺" : " → " + esc(s.finishName)) + "</div>";
+  var times = routePointTimes(s, va), best = 0, bd = Infinity;
+  times.forEach(function(tp, i){ var d = Math.abs(tp.min - min); if(d < bd){ bd = d; best = i; } });
+  html += '<div class="today-wx" id="todayWx">' + wxLineHtml(wxAt(times[best].point, times[best].min)) + "</div>";
+  html += hazardHtml(s, va);
+  if(showDay) html += touchHtml(day.touch);
+
+  if(showCard1){
+    var mp = morningPlace(day.date);
+    html += '<div class="today-card' + (tabList().indexOf("camp") >= 0 ? ' tc-tap" onclick="showTab(\'camp\')"' : '"') + '>' +
+      (mp ? photo(mp.photo) : "") + '<div class="tc-body">' +
+      '<div class="tc-eyebrow">' + esc(t("today.beforeStart.eyebrow")) + "</div>" +
+      (mp ? '<div class="tc-campname">' + esc(mp.name) + "</div>" : "") +
+      '<div class="tc-sub">' + esc(t("today.beforeStart.sub", {breakfast: bfItem ? fmtWindow(bfItem.time) : "—", start: stItem ? fmtWindow(stItem.time) : "—"})) + "</div></div></div>";
+  }
+
+  if(showDay){
+    var ab = s.variants.length > 1 ? '<div class="tc-ab">' + s.variants.map(function(x){
+      return '<button class="' + (x.id === va.id ? "on" : "") + '" onclick="event.stopPropagation();setVariant(\'' + s.id + "','" + x.id + "')\">" + esc(x.id) + "</button>";
+    }).join("") + "</div>" : "";
+    html += '<div class="today-card tc-tap" onclick="showTab(\'route\')">' + (s.todayPhoto ? photo(s.todayPhoto).replace(/<\/div>$/, ab + "</div>") : (ab ? '<div style="position:relative;height:40px">' + ab + "</div>" : "")) + '<div class="tc-body">' +
+      '<div class="tc-eyebrow">' + esc(t("today.route.eyebrow")) + "</div>" +
+      '<div class="tc-stats-row"><div class="tc-stat"><b>' + fmtKm(va.derived.dist) + "</b><span>" + esc(t("today.route.totalKm")) + '</span></div><div class="tc-stat"><b>' + fmtNum(va.derived.gain) + "</b><span>" + esc(t("today.route.totalHm")) + "</span></div></div>";
+    var climb = (va.climbs || []).filter(function(c){ return c.id === va.climbOfDay; })[0];
+    if(climb){
+      html += '<div class="tc-eyebrow" style="margin-top:12px">' + esc(t("today.climbOfDay")) + "</div>" +
+        '<div class="tc-climb-name">' + esc(climb.name) + ' <span class="tc-cat">' + esc(t("segment.cat")) + " " + esc(climb.cat || "?") + "</span></div>" +
+        '<div class="tc-stats-row"><div class="tc-stat"><b>' + fmtKm(climb.kmStart) + "</b><span>" + esc(t("stat.startKm")) + "</span></div>" +
+        '<div class="tc-stat"><b>' + fmtNum(climb.length, 1) + "</b><span>" + esc(t("stat.lengthKm")) + "</span></div>" +
+        '<div class="tc-stat"><b>' + fmtNum(climb.grade, 1) + "%</b><span>" + esc(t("stat.avgGrade")) + "</span></div>" +
+        '<div class="tc-stat"><b>' + fmtNum(Math.round(climb.length * climb.grade * 10)) + "</b><span>" + esc(t("stat.hm")) + "</span></div></div>";
+    }
+    html += '<div class="tc-eyebrow" style="margin-top:12px;' + (hasRiderOverride(s, va) ? "" : "display:none;") + '">' + esc(t("today.wxOnYourTimes")) + '</div><div class="tc-wxlines">';
+    times.forEach(function(tp){
+      var pt = tp.point, wx = wxAt(pt, tp.min), val, pill = "";
+      if(pt.tbd){ val = t("wx.locationFollows"); }
+      else if(!wx){ val = t("wx.pending"); }
+      else{ val = wx.temp + "° " + t("wx.code." + wx.code); if(wx.wind != null) pill = '<span class="wpill">💨 ' + wx.wind + " " + esc(windDir(wx.windDeg)) + "</span>"; }
+      html += '<div class="tc-wxline"><span class="wi">' + (pt.tbd ? "❓" : wx ? (WX_ICON[wx.code] || "🌡️") : "⏳") + '</span><span class="wl2">' + esc(pointLabel(pt)) +
+        ' · <span class="wtime">' + fmtHHMM(tp.min) + '</span></span><div class="wvcol"><span class="wv">' + esc(val) + "</span>" + pill + "</div></div>";
+    });
+    html += "</div></div></div>";
+
+    var tonight = place(day.overnightPlace), rt = riderTimes(s, va);
+    html += '<div class="today-card' + (tonight && tabList().indexOf("camp") >= 0 ? ' tc-tap" onclick="showTab(\'camp\')"' : '"') + '>' +
+      photo(EV.event.images && EV.event.images.finishBanner, "tc-photo-short") + '<div class="tc-body">' +
+      '<div class="tc-eyebrow">' + esc(t("today.expectedFinish")) + "</div>" +
+      '<div class="tc-title">' + fmtHHMM(rt.finish - FINISH_WINDOW_MIN) + "–" + fmtHHMM(rt.finish + FINISH_WINDOW_MIN) + "</div>" +
+      '<div class="tc-sub">' + esc(s.loop ? s.startName : s.finishName) + (tonight ? " · " + esc(tonight.name) : "") + "</div></div></div>";
+  }else{
+    var tn = place(day.overnightPlace), eve2 = eveningBlock(day);
+    if(eve2 || tn){
+      html += '<div class="today-card tc-menu-card' + (tabList().indexOf("camp") >= 0 ? ' tc-tap" onclick="showTab(\'camp\')"' : '"') + '>' +
+        '<div class="tc-menu-eyebrow">' + esc(t("today.welcomeBack")) + "</div>" +
+        (tn ? '<div class="tc-menu-camp">' + esc(tn.name) + "</div>" : "") + '<div class="tc-menu-rule"></div>' + eve2 + "</div>";
+    }
+  }
+  v.innerHTML = html + partnerGridHtml("today");
+}
+
+/* ---------- tabs still to come (delivery 2-4) ---------- */
+function renderPlaceholders(){
+  $("v-route").innerHTML = '<div class="placeholder">Route tab: delivery 2 (accordion, rule 59).</div>';
+  $("v-camp").innerHTML = '<div class="placeholder">Camp tab: delivery 3.</div>';
+  $("v-prep").innerHTML = '<div class="placeholder">Prep tab: delivery 4.</div>';
+}
+
+/* ---------- header, footer, SOS ---------- */
+function renderChrome(){
+  var e = EV.event, st = e.style || {};
+  document.title = e.name;
+  $("hdTitle").textContent = e.shortName;
+  $("hdLogo").style.display = st.logo ? "" : "none";
+  if(st.logo){ $("hdLogo").src = asset(st.logo); $("hdLogo").alt = e.organiser.name; }
+  var langs = e.languages.offered;
+  $("langSw").innerHTML = langs.length > 1 ? langs.map(function(l){ return '<button class="' + (l === LANG ? "on" : "") + '" onclick="setLang(\'' + l + '\')">' + l.toUpperCase() + "</button>"; }).join("") : "";
+  // emergency buttons: only on staffed dates (v2.29 date gate, now from data)
+  var em = e.emergency.organiser, today = todayIso();
+  var staffed = !em.staffed || ((!em.staffed.from || today >= em.staffed.from) && (!em.staffed.to || today <= em.staffed.to));
+  $("hdActions").style.display = staffed ? "flex" : "none";
+  $("waEmergency").style.display = em.whatsapp ? "" : "none";
+  $("waEmergency").href = "https://wa.me/" + em.phone.replace(/\D/g, "");
+  $("waEmergencyLbl").textContent = t("header.whatsappEmergency");
+  $("sosBtnLbl").textContent = t("header.callEmergency");
+  // quick links
+  var ql = "", lk = e.links || {};
+  if(lk.account){ var acc = typeof lk.account === "object" ? (lk.account[LANG] || lk.account[Object.keys(lk.account)[0]]) : lk.account;
+    ql += '<a class="link-btn" href="' + esc(acc) + '" target="_blank" rel="noopener"><div class="lb-row"><span class="lb-txt">' + esc(t("links.myAccount")) + '</span><img class="lb-logo" src="' + esc(asset(st.logo)) + '" alt=""></div></a>'; }
+  if(lk.community) ql += '<a class="link-btn" href="' + esc(lk.community) + '" target="_blank" rel="noopener"><div class="lb-row"><span class="wa-badge-icon" aria-hidden="true"></span><img class="lb-logo" src="' + esc(asset(st.logo)) + '" alt=""></div></a>';
+  $("quickLinks").innerHTML = ql;
+  $("playlistBtn").style.display = lk.playlist ? "" : "none";
+  if(lk.playlist){ $("playlistBtn").href = lk.playlist; $("playlistLbl").textContent = t("footer.playlist", {event: e.name}); }
+  $("footMeta").textContent = t("footer.meta", {source: "Open-Meteo", env: IS_TEST ? "TEST" : "production", version: ENGINE_VERSION + "-" + ENGINE_STATUS + " (engine)"});
+  $("footCopy").textContent = t("footer.copyright", {year: e.edition});
+  // SOS overlay
+  var s = stageOn(today) || optionStages()[0];
+  var country = (s.countries && s.countries[0]) || "";
+  var pub = (e.emergency.publicByCountry && e.emergency.publicByCountry[country]) || PUBLIC_EMERGENCY[country] || "112";
+  $("sosTitle").textContent = t("sos.title");
+  $("sosClose").setAttribute("aria-label", t("common.close"));
+  $("sosPublic").href = "tel:" + pub;
+  $("sosPublicLbl").textContent = t("sos.callPublic.label", {number: pub});
+  $("sosPublicSub").textContent = t("sos.callPublic.sub");
+  $("sosOrg").href = "tel:" + em.phone;
+  $("sosOrgLbl").textContent = t("sos.callOrg.label", {organiser: e.organiser.name});
+  $("sosOrgSub").textContent = t("sos.callOrg.sub", {number: pub});
+}
+function openSos(){ $("sosChoice").classList.add("open"); }
+function closeSos(){ $("sosChoice").classList.remove("open"); }
+
+/* ---------- cover (production only, once per session, as v2.29) ---------- */
+function setupCover(){
+  var c = $("cover"), img = EV.event.images && EV.event.images.cover;
+  var seen = false; try{ seen = sessionStorage.getItem(EV.event.id + ".coverSeen") === "1"; }catch(e){}
+  if(IS_TEST || !img || seen){ c.style.display = "none"; return; }
+  $("coverImg").src = asset(img); $("coverLogo").src = asset(EV.event.style && EV.event.style.logo);
+  $("coverSub").textContent = EV.event.shortName; $("coverTap").textContent = t("cover.tapToContinue");
+  c.style.display = "block";
+}
+function dismissCover(){
+  try{ sessionStorage.setItem(EV.event.id + ".coverSeen", "1"); }catch(e){}
+  var c = $("cover"); c.style.transition = "opacity .35s ease"; c.style.opacity = "0";
+  setTimeout(function(){ c.style.display = "none"; }, 350);
+}
+
+/* ---------- simulator (TEST only). window.engineSim is also what compare.html drives. ---------- */
+window.engineSim = {
+  set: function(iso, min){
+    if(iso) SIM.iso = iso; else if(!SIM.iso) SIM.iso = tzNow().iso;
+    SIM.min = min != null ? min : (SIM.min != null ? SIM.min : 8 * 60);
+    return refresh();
+  },
+  reset: function(){ SIM.iso = null; SIM.min = null; return refresh(); },
+  state: function(){ return {iso: todayIso(), min: nowMin(), simulated: SIM.iso != null}; },
+  showTab: function(tb){ showTab(tb); },
+  setLang: function(l){ setLang(l); }
+};
+function simStep(dir){ engineSim.set(isoAdd(todayIso(), dir), SIM.min != null ? SIM.min : 8 * 60); }
+function paintSim(){
+  if(!IS_TEST) return;
+  $("simBanner").classList.add("on");
+  var d = new Date(todayIso() + "T12:00:00Z");
+  var lbl = new Intl.DateTimeFormat(loc(), {weekday: "short", day: "numeric", month: "short", timeZone: "UTC"}).format(d);
+  $("simDayLbl").textContent = (SIM.iso ? "" : "now · ") + lbl;
+  $("simSlider").value = nowMin();
+  $("simTimeLbl").textContent = fmtHHMM(nowMin()) + (SIM.min == null ? " (real)" : "");
+}
+
+/* ---------- boot ---------- */
+function applyStyle(){
+  var c = (EV.event.style && EV.event.style.colors) || {}, r = document.documentElement.style;
+  var map = {bg: "--bg", paper: "--paper", ink: "--ink", ink2: "--ink2", muted: "--muted", line: "--line", line2: "--line2",
+    brand: "--rose", brandDeep: "--rose-deep", brandSoft: "--rose-soft", brandLine: "--rose-line", warn: "--amber", danger: "--red", stars: "--gold"};
+  for(var k in map) if(c[k]) r.setProperty(map[k], c[k]);
+  var f = (EV.event.style && EV.event.style.fonts) || {};
+  if(f.display) r.setProperty("--disp", "'" + f.display + "',sans-serif");
+  if(f.body) r.setProperty("--body", "'" + f.body + "',sans-serif");
+  if(f.mono) r.setProperty("--mono", "'" + f.mono + "',monospace");
+}
+function renderAll(){
+  renderChrome();
+  renderNav();
+  renderToday();
+  renderPlaceholders();
+  paintSim();
+}
+function refresh(){ return loadWeather().then(renderAll); }
+function bootError(e){
+  document.querySelector(".scroller").insertAdjacentHTML("afterbegin", '<div class="boot-error">Could not start the app:\n' + esc(e && e.message || e) + "</div>");
+}
+function boot(){
+  Promise.all([
+    fetch(CONFIG.eventUrl, {cache: "no-cache"}).then(function(r){ if(!r.ok) throw new Error("event.json not found"); return r.json(); }),
+    fetch(CONFIG.weatherKeymapUrl, {cache: "no-cache"}).then(function(r){ return r.ok ? r.json() : null; }).catch(function(){ return null; })
+  ]).then(function(res){
+    EV = res[0]; KEYMAP = res[1];
+    applyStyle();
+    var stored = store("lang");
+    var lang = stored && EV.event.languages.offered.indexOf(stored) >= 0 ? stored : EV.event.languages.default;
+    return loadLang(lang);
+  }).then(function(){
+    setupCover();
+    return refresh();
+  }).catch(bootError);
+}
+document.addEventListener("visibilitychange", function(){ if(document.visibilityState === "visible" && EV) refresh(); });
+setInterval(function(){ if(EV && SIM.min == null && document.visibilityState === "visible") renderAll(); }, 60000); // keep time-based cards current
+boot();
+if("serviceWorker" in navigator){ navigator.serviceWorker.register("sw.js").catch(function(){}); }
+</script>
+</body>
+</html>

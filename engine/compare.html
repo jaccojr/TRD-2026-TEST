@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compare: v2.29 vs engine</title>
+<style>
+:root{--ink:#2e3440;--muted:#7a716a;--line:#e2dad1;--accent:#CE289E;--bg:#f4f1ee;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);background:var(--bg);}
+.bar{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;}
+.bar h1{font-size:14px;font-weight:700;margin-right:6px;}
+.grp{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.grp label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+button,select,input{font:inherit;font-size:13px;}
+button{border:1px solid var(--line);background:#fff;border-radius:7px;padding:5px 9px;cursor:pointer;}
+button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+input[type=range]{width:220px;accent-color:var(--accent);}
+.time{font-family:ui-monospace,Menlo,monospace;font-weight:700;min-width:44px;display:inline-block;}
+.presets{padding:8px 16px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line);background:#faf8f6;}
+.presets button{font-size:12px;padding:4px 8px;}
+.frames{display:flex;gap:24px;justify-content:center;padding:18px 16px 40px;flex-wrap:wrap;}
+.col{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.col .ttl{font-size:12px;font-weight:700;}
+.col .ttl span{font-weight:400;color:var(--muted);}
+iframe{width:var(--w,390px);height:var(--h,780px);border:1px solid var(--line);border-radius:18px;background:#fff;box-shadow:0 6px 24px rgba(0,0,0,.08);}
+.note{font-size:11px;color:var(--muted);max-width:820px;margin:0 auto;padding:0 16px 30px;line-height:1.5;}
+.status{font-size:11px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="bar">
+  <h1>v2.29 ⟷ engine</h1>
+  <div class="grp"><label>Date</label><input type="date" id="date"></div>
+  <div class="grp"><label>Time</label><input type="range" id="time" min="0" max="1439" step="15" value="480"><span class="time" id="timeLbl">08:00</span></div>
+  <div class="grp"><label>Tab</label>
+    <button data-tab="today" class="on">Today</button><button data-tab="route">Route</button><button data-tab="camp">Camp</button><button data-tab="prep">Prep</button>
+  </div>
+  <div class="grp"><label>Engine language</label><span id="langs"></span></div>
+  <div class="grp"><label>Size</label>
+    <select id="size"><option value="390x780">iPhone 390</option><option value="375x667">iPhone SE 375</option><option value="430x860">iPhone Max 430</option></select>
+  </div>
+  <div class="grp"><button id="reset">Real time</button><span class="status" id="status">loading…</span></div>
+</div>
+<div class="presets" id="presets"></div>
+<div class="frames">
+  <div class="col"><div class="ttl">v2.29 <span>(TEST root, reference)</span></div><iframe id="old" src="../"></iframe></div>
+  <div class="col"><div class="ttl">Engine <span>(/engine/)</span></div><iframe id="neo" src="./"></iframe></div>
+</div>
+<p class="note">One control drives both apps. Left is the TRD v2.29 you shipped, right is the engine. v2.29 asks for the TEST password once; after that both frames open straight away.
+Scrolling, the tab bar and lock/unlock behaviour can only be judged on the phone itself: open /engine/ on its own for that.
+Tab "Camp" is called "Camping" (tab id "event") in v2.29.</p>
+<script>
+var OLD_TAB = {today:"today", route:"route", camp:"event", prep:"prep"};
+var state = {iso:null, min:480, tab:"today"};
+var ev = null;
+function $(id){ return document.getElementById(id); }
+function hhmm(m){ var h=Math.floor(m/60), mm=m%60; return (h<10?"0":"")+h+":"+(mm<10?"0":"")+mm; }
+function add(iso,n){ var d=new Date(iso+"T12:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return d.toISOString().slice(0,10); }
+function ready(){
+  var o=$("old").contentWindow, n=$("neo").contentWindow;
+  return {old: !!(o && o.renderAll && o.RIDE), neo: !!(n && n.engineSim && n.EV)};
+}
+function apply(){
+  var r=ready(); $("status").textContent = "v2.29 "+(r.old?"ready":"waiting (password?)")+" · engine "+(r.neo?"ready":"loading");
+  $("timeLbl").textContent = hhmm(state.min);
+  if(r.old){
+    var o=$("old").contentWindow;
+    try{
+      if(state.iso){ var p=state.iso.split("-"); o.SIM_DATE=new o.Date(+p[0],+p[1]-1,+p[2]); o.SIM_MIN=state.min; }
+      else { o.SIM_DATE=null; o.SIM_MIN=null; }
+      o.renderAll(); if(o.updateSimBanner) o.updateSimBanner();
+      try{ o.showTab(OLD_TAB[state.tab]); }catch(e){}
+    }catch(e){ console.warn("v2.29:",e); }
+  }
+  if(r.neo){
+    var n=$("neo").contentWindow;
+    var p2 = state.iso ? n.engineSim.set(state.iso,state.min) : n.engineSim.reset();
+    Promise.resolve(p2).then(function(){ n.engineSim.showTab(state.tab); });
+  }
+}
+function setTab(tb){ state.tab=tb; document.querySelectorAll("[data-tab]").forEach(function(b){ b.classList.toggle("on", b.dataset.tab===tb); }); apply(); }
+function buildPresets(){
+  var days=ev.days, first=days[0].date, last=days[days.length-1].date, out=[];
+  out.push(["3 weeks before", add(first,-21), 10*60]);
+  days.forEach(function(d){
+    var lbl=d.date.slice(8)+"/"+(+d.date.slice(5,7));
+    if(d.type==="stage"){ out.push([lbl+" 07:00",d.date,420],[lbl+" 12:00",d.date,720],[lbl+" 19:00",d.date,1140]); }
+    else { out.push([lbl+" "+d.type+" 15:00",d.date,900],[lbl+" 21:00",d.date,1260]); }
+  });
+  out.push(["after the event", add(last,3), 10*60]);
+  $("presets").innerHTML = out.map(function(p,i){ return '<button data-p="'+i+'">'+p[0]+"</button>"; }).join("");
+  $("presets").onclick=function(e){ var i=e.target.dataset.p; if(i==null)return; var p=out[+i]; state.iso=p[1]; state.min=p[2]; $("date").value=p[1]; $("time").value=p[2]; apply(); };
+  $("langs").innerHTML = ev.event.languages.offered.map(function(l){ return '<button data-l="'+l+'">'+l.toUpperCase()+"</button>"; }).join("");
+  $("langs").onclick=function(e){ var l=e.target.dataset.l; if(!l)return; var n=$("neo").contentWindow; if(n.engineSim){ n.engineSim.setLang(l); setTimeout(apply,300); } };
+}
+fetch("event.json",{cache:"no-cache"}).then(function(r){return r.json();}).then(function(d){ ev=d; buildPresets(); });
+$("date").onchange=function(){ state.iso=this.value||null; apply(); };
+$("time").oninput=function(){ state.min=+this.value; if(!state.iso){ state.iso=new Date().toISOString().slice(0,10); $("date").value=state.iso; } apply(); };
+$("reset").onclick=function(){ state.iso=null; $("date").value=""; apply(); };
+document.querySelectorAll("[data-tab]").forEach(function(b){ b.onclick=function(){ setTab(b.dataset.tab); }; });
+$("size").onchange=function(){ var p=this.value.split("x"); document.documentElement.style.setProperty("--w",p[0]+"px"); document.documentElement.style.setProperty("--h",p[1]+"px"); };
+$("old").onload=$("neo").onload=function(){ setTimeout(apply,600); };
+setInterval(function(){ var r=ready(); if(!(r.old&&r.neo)) apply(); }, 2000); // picks up v2.29 once the password is entered
+</script>
+</body>
+</html>
